@@ -57,7 +57,6 @@ class SexyFish():
     def how_many(self):
         print(np.sum([v for k,v in self.fishy.items()]))
 
-
 my_sexy_fish = SexyFish(fish_dict.copy())
 my_sexy_fish.fish_cycle(256)
 my_sexy_fish.how_many()
