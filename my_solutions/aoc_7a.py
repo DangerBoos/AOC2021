@@ -13,9 +13,3 @@ else:
 dta = np.array([int(x) for x in dta[0].split(',')])
 best_point = np.median(dta)
 print(np.sum(abs(dta-best_point)))
-
-def triangle_numbers(n):
-    return [i*(i+1)/2 for i in range(n+1)]
-
-triangle_numbers(3)
-
