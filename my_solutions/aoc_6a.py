@@ -17,7 +17,7 @@ else:
     fish_cycle = pd.DataFrame([x.split(',') for x in dta])
 fishy = fish_cycle.loc[0,:].dropna()
 
-class SexyFish():
+class StupidSexyFlounders():
     def __init__(self, fishy):
         self.fishy=np.array([int(x) for x in fishy])
         self.recycle_idx = None
@@ -47,6 +47,6 @@ class SexyFish():
         print(len(self.fishy))
 
 
-my_sexy_fish = SexyFish(fish_cycle.loc[0,:].dropna())
+my_sexy_fish = StupidSexyFlounders(fish_cycle.loc[0, :].dropna())
 my_sexy_fish.fish_cycle(256)
 my_sexy_fish.how_many()
