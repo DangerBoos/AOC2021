@@ -97,7 +97,7 @@ class Shiny:
 
 
 crawler = Shiny(octo_grid=octo_grid)
-crawler.cycles(cycles=100)
+crawler.cycles(cycles=195)
 print(crawler.octo_grid)
 print(crawler.flashes)
 #fuuuuuuuuauuu

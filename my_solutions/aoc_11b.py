@@ -5,7 +5,7 @@ from pathlib  import Path
 import numpy as np
 import pandas as pd
 day = 11
-example = True
+example = False
 if example:
    dta = """5483143223
 2745854711
@@ -41,6 +41,7 @@ class Shiny:
         self.octo_grid = octo_grid
         self.flashed = np.zeros((self.octo_grid.shape[0], self.octo_grid.shape[1])) if flashed is None else flashed
         self.flashes=0
+        self.iter=0
 
     def find_flashers(self, df, row_shift=0, col_shift=0):
         eligible_flashers = list(zip(np.where(df > 9)[0], np.where(df > 9)[1]))
@@ -77,14 +78,17 @@ class Shiny:
 
     def step(self):
         # self.viz()
+        self.iter+=1
         self.flashed=np.zeros((self.octo_grid.shape[0], self.octo_grid.shape[1]))
         self.octo_grid+=1 #energize
         for self.row, self.col in self.find_flashers(df=self.octo_grid):
             if self.flashed[self.row,self.col]==0:
                 self.flasher_reaction(self.row, self.col)
-        print(np.sum(self.flashed))
         self.flashes+=np.sum(self.flashed)
         self.octo_grid[self.octo_grid>9]=0
+
+        if np.sum(self.octo_grid)==0:
+            print(self.iter)
 
     def cycles(self, cycles):
         for _ in range(cycles):
@@ -97,7 +101,5 @@ class Shiny:
 
 
 crawler = Shiny(octo_grid=octo_grid)
-crawler.cycles(cycles=100)
-print(crawler.octo_grid)
-print(crawler.flashes)
-#fuuuuuuuuauuu
+crawler.cycles(cycles=1000)
+#i dont care, just gonna fid the smallest
