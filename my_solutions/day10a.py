@@ -29,7 +29,7 @@ for line in dta:
         if char in openers:
             subline.append(char)
         if char in closers:
-            matchme=subline.pop(-1)
+            matchme=subline.pop()
             if matchme!=match[char]:
                 print(f'expecting {match[matchme]} got {char}')
                 pts+=pt_lkup[char]
