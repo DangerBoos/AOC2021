@@ -14,25 +14,32 @@ if example:
 else:
     dta = aocd.get_data(session=session, day=day, year=2021).splitlines()
 
+
+##########################################################################
 match = dict()
-openers  = '[({<'
+openers = '[({<'
 closers = '])}>'
 for a,b in list(zip(openers,closers)):
     match[a]=b
     match[b]=a
 
-pt_lkup = {')':3, ']':57, '}': 1197, '>': 25137}
-pts=0
+pt_lkup = {')':1, ']':2, '}': 3, '>': 4}
+pt_list = []
 for line in dta:
     subline = []
+    pts = 0
     for i, char in enumerate(line):
         if char in openers:
             subline.append(char)
         if char in closers:
             matchme=subline.pop(-1)
             if matchme!=match[char]:
-                print(f'expecting {match[matchme]} got {char}')
-                pts+=pt_lkup[char]
-                pass
+                break
+    else:
+        subline.reverse()
+        for i in subline:
+            pts=pts*5+pt_lkup[match[i]]
+        pt_list.append(pts)
 
-print(pts)
+pt_list.sort()
+print(pt_list[len(pt_list)//2])
