@@ -1,3 +1,4 @@
+#relied on this to guide me to solution: https://www.geeksforgeeks.org/find-paths-given-source-destination/
 session = '53616c7465645f5f909d03044a4bbf4965bb47c0efa80c77dbf8839bf77c0be49f12e2aa2096a0e8b4721d748e199bc9'
 
 import aocd
