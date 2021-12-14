@@ -8,79 +8,78 @@ from typing import List
 from collections import deque
 import numpy as np
 import pandas as pd
-day = 12
+day = 13
 example = False
 if example:
-   dta = """dc-end
-HN-start
-start-kj
-dc-start
-dc-HN
-LN-dc
-HN-end
-kj-sa
-kj-HN
-kj-dc""".splitlines()
+   dta = """6,10
+0,14
+9,10
+0,3
+10,4
+4,11
+6,0
+6,12
+4,1
+0,13
+10,12
+3,4
+3,0
+8,4
+1,10
+2,14
+8,10
+9,0
+
+fold along y=7
+fold along x=5"""
 else:
-    dta = aocd.get_data(session=session, day=day, year=2021).splitlines()
+    dta = aocd.get_data(session=session, day=day, year=2021)
 
-def generateAdjacencyLst(edges):
-    adjacencyList = defaultdict(list)
-    for u, v in edges:
-        adjacencyList[u].append(v)
-        adjacencyList[v].append(u)
-    return adjacencyList
+def get_y_trans(y_line):
+    translate = np.matrix([[1,0,-1*y_line],[0,1,0],[0,0,1]])
+    flip =  np.matrix([[-1,0,0],[0,1,0],[0,0,1]])
+    untranslate = np.matrix([[1,0,y_line],[0,1,0],[0,0,1]])
+    return untranslate*flip*translate
 
+def get_x_trans(x_line):
+    translate = np.matrix([[1, 0, 0], [0, 1, -1 * x_line], [0, 0, 1]])
+    flip = np.matrix([[1, 0, 0], [0, -1, 0], [0, 0, 1]])
+    untranslate = np.matrix([[1, 0, 0], [0, 1, x_line], [0, 0, 1]])
+    return untranslate*flip*translate
 
-cave_map = [(x.split('-')[0],x.split('-')[1]) for  x in dta]
-adjacency_list = generateAdjacencyLst(cave_map)
+dots_,instructions =dta.split('\n\n')
+dots = np.array([(int(x.split(',')[1]), int(x.split(',')[0])) for x in dots_.splitlines()])
+instructions = [(x.split('=')[0][-1],int(x.split('=')[1]))for x in instructions.splitlines()]
 
-# Python program to print all paths from a source to destination.
+paper = np.zeros(dots.max(axis=0) + 1)
+for i in dots:
+    paper[tuple(i)]=1
 
-class Cave:
+for iter, instruction in enumerate(instructions):
+    line_type = instruction[0]
+    line_shift = instruction[1]
+    if line_type=='y':
+        mask = dots[:, 0] > line_shift
+        dots_flippable = dots[mask, :]
+        trans =  get_y_trans(y_line=line_shift)
+    else:
+        mask=dots[:, 1] > line_shift
+        dots_flippable = dots[mask,:]
+        trans = get_x_trans(x_line=line_shift)
 
-    def __init__(self, adjacency: dict, src: str,dst: str):
-        self.adjacency=adjacency
-        self.src = src
-        self.dst = dst
-        self.paths = []
+    for i in dots_flippable:
+        new_pos = tuple(np.array(trans * np.append(i, 1).reshape(3, 1))[0:2])
+        paper[new_pos] = 1
+    if line_type == 'y':
+        paper = paper[:line_shift,:]
+    if line_type == 'x':
+        paper = paper[:, :line_shift]
 
-
-    def get_paths(self):
-        print(len(self.paths))
-         # self.paths
-
-    def not_visited(self, node: str, path: List) -> int:
-        if node in path and (node.islower() or node=='start'):
-                return 0
-        return 1
-
-
-    # Utility function for finding paths in graph
-    # from source to destination
-    def findpaths(self) -> None:
-        # Create a queue which stores the paths
-        q = deque()
-        # Path vector to store the current path
-        path = [self.src] #maybe
-        q.append(path.copy())
-
-        while q:
-            path = q.popleft()
-            last = path[-1]
-
-            # if destination then print path
-            if last == self.dst:
-                self.paths.append(path)
-            # Traverse to all the nodes connected to current vertex and push new path to queue
-            for next_node in self.adjacency[last]:
-                if self.not_visited(next_node, path):
-                    newpath = path.copy()
-                    newpath.append(next_node)
-                    q.append(newpath)
+    dots = np.transpose(paper.nonzero())
 
 
-# Function for finding the paths
-my_cave = Cave(adjacency=adjacency_list, src='start', dst='end')
-my_cave.findpaths()
-my_cave.get_paths()
+
+    print(np.sum(paper))
+########################################
+for i in paper:
+    print(''.join([str(int(x)).replace('1','#').replace('0','_') for x in i]))
