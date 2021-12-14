@@ -1,11 +1,11 @@
-session = '53616c7465645f5f909d03044a4bbf4965bb47c0efa80c77dbf8839bf77c0be49f12e2aa2096a0e8b4721d748e199bc9'
-
 import aocd
-from pathlib  import Path
+from pathlib import Path
 import numpy as np
 import pandas as pd
-
 from collections import defaultdict
+from session.session import get_session
+
+my_session = get_session()
 example = False
 
 if example:
@@ -15,29 +15,30 @@ if example:
         dta = f.read().splitlines()
         fish_cycle = pd.DataFrame([x.split(': ')[1].split(',') for x in dta])
 else:
-    dta = aocd.get_data(session=session, day=6, year=2021).splitlines()
+    dta = aocd.get_data(session=get_session(), day=6, year=2021).splitlines()
     fish_cycle = pd.DataFrame([x.split(',') for x in dta])
-fishy = fish_cycle.loc[0,:].dropna()
+fishy = fish_cycle.loc[0, :].dropna()
 fish_dict = defaultdict(lambda: 0)
 for i in fishy:
-    fish_dict[int(i)] +=1
+    fish_dict[int(i)] += 1
+
 
 class SexyFish():
     def __init__(self, fishy):
-        self.fishy=fishy.copy()
+        self.fishy = fishy.copy()
         self.recycle_idx = None
         self.new_fishies = 0
 
     def update_age(self):
-        for k in list(range(-1,8,1)):
-            self.fishy[k]=self.fishy[k+1]
-            self.fishy[k+1]=0
+        for k in list(range(-1, 8, 1)):
+            self.fishy[k] = self.fishy[k + 1]
+            self.fishy[k + 1] = 0
 
     def birth_update(self):
-        if self.fishy[-1]>0:
-            self.fishy[6]+=self.fishy[-1]
-            self.fishy[8]= self.fishy[-1]
-            self.fishy[-1]=0
+        if self.fishy[-1] > 0:
+            self.fishy[6] += self.fishy[-1]
+            self.fishy[8] = self.fishy[-1]
+            self.fishy[-1] = 0
         self.fishy[-1] = 0
 
     def check_for_births(self):
@@ -51,13 +52,14 @@ class SexyFish():
 
     def pretty_print(self):
         out = []
-        for k,v in self.fishy.items():
-            out.append([k]*v)
+        for k, v in self.fishy.items():
+            out.append([k] * v)
         print(out)
+
     def how_many(self):
-        print(np.sum([v for k,v in self.fishy.items()]))
+        print(np.sum([v for k, v in self.fishy.items()]))
+
 
 my_sexy_fish = SexyFish(fish_dict.copy())
 my_sexy_fish.fish_cycle(256)
 my_sexy_fish.how_many()
-
