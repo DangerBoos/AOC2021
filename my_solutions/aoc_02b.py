@@ -1,10 +1,8 @@
-session = '53616c7465645f5f909d03044a4bbf4965bb47c0efa80c77dbf8839bf77c0be49f12e2aa2096a0e8b4721d748e199bc9'
-
 import aocd
-import numpy as np
-from functools import reduce
-from pathlib  import Path
+from pathlib import Path
+from session.session import get_session
 
+my_session = get_session()
 example = False
 
 if example:
@@ -13,7 +11,7 @@ if example:
     with open(data_dir / file) as f:
         dta = f.read().splitlines()
 else:
-    dta = aocd.get_data(session=session, day=2, year=2021, block=True).splitlines()
+    dta = aocd.get_data(session=my_session, day=2, year=2021, block=True).splitlines()
 
 
 class sub:
@@ -27,10 +25,10 @@ class sub:
         print(f'depth: {self.depth}')
 
     def update_horizontal(self, qty):
-        self.horizontal+=qty
+        self.horizontal += qty
 
     def update_depth(self, qty):
-        self.depth = self.depth + self.aim*qty
+        self.depth = self.depth + self.aim * qty
 
     def go_forward(self, qty):
         self.update_horizontal(qty)
@@ -45,16 +43,15 @@ class sub:
     def follow_instructions(self, instruction):
         direction, qty = instruction.split(' ')
         qty = int(qty)
-        if direction =='forward':
+        if direction == 'forward':
             self.go_forward(qty)
-        if direction =='down':
+        if direction == 'down':
             self.go_down(qty)
-        if direction =='up':
+        if direction == 'up':
             self.go_up(qty)
 
     def get_product(self):
-        return self.depth*self.horizontal
-
+        return self.depth * self.horizontal
 
 
 my_sub = sub()

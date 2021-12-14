@@ -1,17 +1,15 @@
-#relied on this to guide me to solution: https://www.geeksforgeeks.org/find-paths-given-source-destination/
-session = '53616c7465645f5f909d03044a4bbf4965bb47c0efa80c77dbf8839bf77c0be49f12e2aa2096a0e8b4721d748e199bc9'
-
+# relied on this to guide me to solution: https://www.geeksforgeeks.org/find-paths-given-source-destination/
 import aocd
 from collections import defaultdict, deque
-
 from typing import List
-from collections import deque
-import numpy as np
-import pandas as pd
+from session.session import get_session  # returns personal session
+
+my_session = get_session()
 day = 12
 example = False
+
 if example:
-   dta = """dc-end
+    dta = """dc-end
 HN-start
 start-kj
 dc-start
@@ -22,7 +20,8 @@ kj-sa
 kj-HN
 kj-dc""".splitlines()
 else:
-    dta = aocd.get_data(session=session, day=day, year=2021).splitlines()
+    dta = aocd.get_data(session=my_session, day=day, year=2021).splitlines()
+
 
 def generateAdjacencyLst(edges):
     adjacencyList = defaultdict(list)
@@ -32,29 +31,28 @@ def generateAdjacencyLst(edges):
     return adjacencyList
 
 
-cave_map = [(x.split('-')[0],x.split('-')[1]) for  x in dta]
+cave_map = [(x.split('-')[0], x.split('-')[1]) for x in dta]
 adjacency_list = generateAdjacencyLst(cave_map)
+
 
 # Python program to print all paths from a source to destination.
 
 class Cave:
 
-    def __init__(self, adjacency: dict, src: str,dst: str):
-        self.adjacency=adjacency
+    def __init__(self, adjacency: dict, src: str, dst: str):
+        self.adjacency = adjacency
         self.src = src
         self.dst = dst
         self.paths = []
 
-
     def get_paths(self):
         print(len(self.paths))
-         # self.paths
+        # self.paths
 
     def not_visited(self, node: str, path: List) -> int:
-        if node in path and (node.islower() or node=='start'):
-                return 0
+        if node in path and (node.islower() or node == 'start'):
+            return 0
         return 1
-
 
     # Utility function for finding paths in graph
     # from source to destination
@@ -62,7 +60,7 @@ class Cave:
         # Create a queue which stores the paths
         q = deque()
         # Path vector to store the current path
-        path = [self.src] #maybe
+        path = [self.src]  # maybe
         q.append(path.copy())
 
         while q:

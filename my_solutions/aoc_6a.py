@@ -1,9 +1,10 @@
-session = '53616c7465645f5f909d03044a4bbf4965bb47c0efa80c77dbf8839bf77c0be49f12e2aa2096a0e8b4721d748e199bc9'
-
 import aocd
-from pathlib  import Path
+from pathlib import Path
 import numpy as np
 import pandas as pd
+from session.session import get_session
+
+my_session = get_session()
 example = False
 
 if example:
@@ -13,13 +14,14 @@ if example:
         dta = f.read().splitlines()
         fish_cycle = pd.DataFrame([x.split(': ')[1].split(',') for x in dta])
 else:
-    dta = aocd.get_data(session=session, day=6, year=2021).splitlines()
+    dta = aocd.get_data(session=my_session, day=6, year=2021).splitlines()
     fish_cycle = pd.DataFrame([x.split(',') for x in dta])
-fishy = fish_cycle.loc[0,:].dropna()
+fishy = fish_cycle.loc[0, :].dropna()
+
 
 class StupidSexyFlounders():
     def __init__(self, fishy):
-        self.fishy=np.array([int(x) for x in fishy])
+        self.fishy = np.array([int(x) for x in fishy])
         self.recycle_idx = None
         self.new_fishies = 0
 
@@ -27,14 +29,14 @@ class StupidSexyFlounders():
         self.fishy = np.array([x - 1 for x in self.fishy])
 
     def birth_update(self):
-        if len(self.recycle_idx)>0:
-            self.fishy[self.recycle_idx]=6
+        if len(self.recycle_idx) > 0:
+            self.fishy[self.recycle_idx] = 6
             self.fishy = np.append(self.fishy, np.repeat(8, len(self.recycle_idx)))
         self.recycle_idx = None
         self.new_fishies = 0
 
     def check_for_births(self):
-        self.recycle_idx = list(np.where(self.fishy<0)[0])
+        self.recycle_idx = list(np.where(self.fishy < 0)[0])
         self.birth_update()
 
     def fish_cycle(self, iters=1):
