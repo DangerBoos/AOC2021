@@ -36,7 +36,7 @@ def generateAdjacencyLst(edges):
 adjacency_list = generateAdjacencyLst(E)
 print(adjacency_list)
 
-
+#############################################################################
 
 
 def bfs(Adj, s):  # Adj: adjacency list, s: starting vertex
@@ -60,7 +60,8 @@ def bfs(Adj, s):  # Adj: adjacency list, s: starting vertex
 
 
 parents, distances = bfs(Adj= adjacency_list, s='A')
-def bfs(adj, s):
+#############################################################################
+def bfs2(adj, s):
     parent = {s: None}
     d = {s: 0}
 
@@ -76,6 +77,7 @@ def bfs(adj, s):
                 queue.append(n)
         return parent, d
 
+parents, distances = bfs2(adj= adjacency_list, s='A')
 
 def path(node, parent, destination):
     path = []
@@ -86,3 +88,71 @@ def path(node, parent, destination):
     return path
 
 path(node='K', parent=parents, destination='A')
+
+
+
+#############################################################################
+#Not a shortest path algo...
+# maybe look into it later?
+def dfs(adj, v, parent, order):
+    if not parent:
+        parent[v] = None
+    # checking neighbours of v
+    for n in adj[v]:
+        if n not in parent:
+            parent[n] = v
+            dfs(adj, n, parent, order)
+
+    # we're done visiting a node only when we're done visiting
+    # all of its descendents first
+    order.append(v)
+
+
+
+
+###################
+# EDGE RELAXATION #
+###################
+#real code but not used:
+def Relax(u, v, weight, parent, dist):
+    if dist[v] > dist[u] + weight(u, v):
+        dist[v] = dist[u] + weight(u, v)
+        parent[v] = u
+# we have some distance to v (perhaps initialized to INF) then we check if the current distance to V is greater than
+ # distance to U + weight(u,v).  If so, dist(v) is updated to distance going through u-v edge.  AND we update parent of
+ # V to be U (since that's the best way to get there.
+
+ #PSEUDO CODE (find the path to node from all adjacent nodes):
+ #1. Select edge (u, v) from the graph.
+ #2.  Relax edge (u, v).
+ #3. repeat 1 and 2, selecting edges in some order, until no edges can be relaxed (d[v] ≤ d[a] + weight(a, v) for all edges (a, v))
+ # Pick all edges leading to this point and find the shortest one.  Now on to how we pick these edges
+
+
+###################
+#   BELLMAN FORD  #
+###################
+# didn't understand it quickly and it uses negative weights so moving on
+
+###################
+#    DJIKSTRA     #
+###################
+# The reason I came here anyway
+#             A
+#       /2   3|   7 \
+#      B      C      D
+
+#What's the shortest path to C
+
+# Pseudo-code Dijkstra (adj, source):
+# visited = {}
+# Q = priority_queue()
+# Initialize Q with (node, distance) values, distance being 0 for the source and infinity for every other node.
+# while Q is not empty:
+#     u = extract_min(Q) # deletes u from Q
+#     visited = visited ∪ {u}
+#     for each vertex v, weight in Adj[u]:
+#         if d[v] > d[u] + weight(u, v):
+#             d[v] = d[u] + weight(u, v)
+#             parent[v] = u
+#             Q.decrease_key(v, d[v])
